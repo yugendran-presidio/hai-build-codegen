@@ -2,7 +2,7 @@
 Thank you for contributing to Cline!
 
 ⚠️ Important: Before submitting this PR, please ensure you have:
-- For feature requests: Created a discussion in our Feature Requests discussions board https://github.com/cline/cline/discussions/categories/feature-requests and received approval from core maintainers before implementation
+- For feature requests: Created a discussion in our Feature Requests discussions board https://github.com/presidio-oss/hai-build-codegen/discussions/categories/feature-requests and received approval from core maintainers before implementation
 - For all changes: Link the associated issue/discussion in the "Related Issue" section below
 
 Limited exceptions:
@@ -61,7 +61,7 @@ We're not looking for exhaustive documentation - just evidence that you've thoug
 -   [ ] Changes are limited to a single feature, bugfix or chore (split larger changes into separate PRs)
 -   [ ] Tests are passing (`npm test`) and code is formatted and linted (`npm run format && npm run lint`)
 -   [ ] I have created a changeset using `npm run changeset` (required for user-facing changes)
--   [ ] I have reviewed [contributor guidelines](https://github.com/cline/cline/blob/main/CONTRIBUTING.md)
+-   [ ] I have reviewed [contributor guidelines](https://github.com/presidio-oss/hai-build-codegen/blob/main/CONTRIBUTING.md)
 
 ### Screenshots
 

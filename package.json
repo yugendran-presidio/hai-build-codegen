@@ -2,7 +2,7 @@
 	"name": "hai-build-codegen",
 	"displayName": "HAI Build Codegen",
 	"description": "Autonomous coding agent right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-	"version": "3.43.0",
+	"version": "3.11.0",
 	"icon": "assets/icons/HAI-Rounded-Dark@3x.png",
 	"engines": {
 		"vscode": "^1.84.0"
@@ -11,7 +11,7 @@
 		"name": "Presidio Inc."
 	},
 	"license": "Apache-2.0",
-	"publisher": "PRESIDIO",
+	"publisher": "presidio-inc",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/presidio-oss/hai-build-codegen"

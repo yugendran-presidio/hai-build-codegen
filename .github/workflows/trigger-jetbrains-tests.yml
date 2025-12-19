@@ -1,4 +1,4 @@
-name: Trigger Jetbrains Plugin <-> Cline Tests
+name: Trigger Jetbrains Plugin <-> HAI Tests
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
@@ -19,7 +19,7 @@ jobs:
         with:
           app-id: 1998650
           private-key: ${{ secrets.CLINE_JETBRAINS_WORKFLOW_KEY }}
-          owner: cline
+          owner: HAI
           repositories: intellij-plugin
 
       - name: Sanitize untrusted inputs
@@ -44,12 +44,12 @@ jobs:
           curl -X POST \
             -H "Authorization: Bearer ${{ steps.app-token.outputs.token }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            -H "User-Agent: cline-pr-trigger" \
+            -H "User-Agent: hai-pr-trigger" \
             -H "Content-Type: application/json" \
             https://api.github.com/repos/cline/intellij-plugin/dispatches \
             -d @- <<EOF
           {
-            "event_type": "cline-pr-check",
+            "event_type": "hai-pr-check",
             "client_payload": {
               "pr_number": "${{ github.event.number }}",
               "branch_name": $BRANCH_NAME,

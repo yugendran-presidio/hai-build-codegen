@@ -172,8 +172,8 @@ git checkout main
 ```
 VS Code Hotfix v{VERSION} Published
 
-- Description of fix 1 https://github.com/cline/cline/pull/{PR_NUMBER}
-- Description of fix 2 https://github.com/cline/cline/pull/{PR_NUMBER}
+- Description of fix 1 https://github.com/presidio-oss/hai-build-codegen/pull/{PR_NUMBER}
+- Description of fix 2 https://github.com/presidio-oss/hai-build-codegen/pull/{PR_NUMBER}
 ```
 
 Present a final summary:
@@ -183,7 +183,7 @@ Present a final summary:
 - Slack message copied to clipboard: yes
 
 Remind the user to:
-1. Manually trigger the publish release GitHub Action at: https://github.com/cline/cline/actions/workflows/publish.yml (paste `v{VERSION}` as the tag)
+1. Manually trigger the publish release GitHub Action at: https://github.com/presidio-oss/hai-build-codegen/actions/workflows/publish.yml (paste `v{VERSION}` as the tag)
 2. Post the Slack message to announce the hotfix
 
 ## Important Notes

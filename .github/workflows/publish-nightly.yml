@@ -1,8 +1,8 @@
 name: "Publish Nightly Release"
 
 on:
-  schedule:
-    - cron: '0 12 * * *'  # 4 AM PST (UTC-8) = 12 UTC
+  # schedule:
+  #   - cron: '0 12 * * *'  # 4 AM PST (UTC-8) = 12 UTC
   workflow_dispatch:
 
 permissions:
@@ -17,8 +17,8 @@ jobs:
 
     publish:
         needs: test
-        name: Publish Cline (Nightly) Extension
-        if: github.repository == 'cline/cline'
+        name: Publish HAI (Nightly) Extension
+        if: github.repository == 'presidio-oss/hai-build-codegen'
         runs-on: ubuntu-latest
         environment: PublishNightly
 
