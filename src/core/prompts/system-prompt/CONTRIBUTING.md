@@ -703,7 +703,7 @@ UPDATE_SNAPSHOTS=true npm run test:unit
 **Example verification:**
 ```json
 {
-  "systemPrompt": "You are Cline...\n\n====\n\n# Agent Role\n...",
+  "systemPrompt": "You are HAI...\n\n====\n\n# Agent Role\n...",
   "modelFamily": "my-new-model",
   "tools": ["bash", "file_read", "ask"],
   // ... rest of task data
