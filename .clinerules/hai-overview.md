@@ -723,7 +723,7 @@ class Controller {
   async downloadMcp(mcpId: string) {
     // Fetch server details from marketplace
     const response = await axios.post<McpDownloadResponse>(
-      "https://api.cline.bot/v1/mcp/download",
+      "https://api.hai.bot/v1/mcp/download",
       { mcpId },
       {
         headers: { "Content-Type": "application/json" },
@@ -761,4 +761,4 @@ Contributions to the HAI extension are welcome! Please follow these guidelines:
 
 When adding new tools or API providers, follow the existing patterns in the `src/integrations/` and `src/api/providers/` directories, respectively. Ensure that your code is well-documented and includes appropriate error handling.
 
-The `.clineignore` file allows users to specify files and directories that HAI should not access. When implementing new features, respect the `.clineignore` rules and ensure that your code does not attempt to read or modify ignored files.
+The `.haiignore` file allows users to specify files and directories that HAI should not access. When implementing new features, respect the `.haiignore` rules and ensure that your code does not attempt to read or modify ignored files.

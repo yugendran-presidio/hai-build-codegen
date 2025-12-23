@@ -167,10 +167,10 @@ class NightlyPublisher {
 	 * Update package.json with nightly configuration
 	 */
 	updatePackageJson() {
-		// Replace any occurrences cline. or hai-build-codegen with nightly name
+		// Replace any occurrences cline. or hai-build-code-generator with nightly name
 		const rawContent = fs.readFileSync(config.packageJsonPath, "utf-8")
 		const content = rawContent
-			.replaceAll("hai-build-codegen", config.nightlyName)
+			.replaceAll("hai-build-code-generator", config.nightlyName)
 			.replaceAll('"cline.', `"${config.nightlyName}.`)
 
 		const pkg = JSON.parse(content)

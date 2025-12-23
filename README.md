@@ -2,7 +2,7 @@
 English | <a href="https://github.com/presidio-oss/hai-build-codegen/blob/main/locales/es/README.md" target="_blank">Español</a> | <a href="https://github.com/presidio-oss/hai-build-codegen/blob/main/locales/de/README.md" target="_blank">Deutsch</a> | <a href="https://github.com/presidio-oss/hai-build-codegen/blob/main/locales/ja/README.md" target="_blank">日本語</a> | <a href="https://github.com/presidio-oss/hai-build-codegen/blob/main/locales/zh-cn/README.md" target="_blank">简体中文</a> | <a href="https://github.com/presidio-oss/hai-build-codegen/blob/main/locales/zh-tw/README.md" target="_blank">繁體中文</a> | <a href="https://github.com/presidio-oss/hai-build-codegen/blob/main/locales/ko/README.md" target="_blank">한국어</a>
 </sub></div>
 
-# Cline
+# HAI
 
 <p align="center">
   <img src="https://media.githubusercontent.com/media/presidio-oss/hai-build-codegen/main/assets/docs/demo.gif" width="100%" />
@@ -23,7 +23,7 @@ English | <a href="https://github.com/presidio-oss/hai-build-codegen/blob/main/l
 
 Meet HAI, an AI assistant that can use your **CLI** a**N**d **E**ditor.
 
-Thanks to [Claude Sonnet's agentic coding capabilities](https://www.anthropic.com/claude/sonnet), Cline can handle complex software development tasks step-by-step. With tools that let him create & edit files, explore large projects, use the browser, and execute terminal commands (after you grant permission), he can assist you in ways that go beyond code completion or tech support. HAI can even use the Model Context Protocol (MCP) to create new tools and extend his own capabilities. While autonomous AI scripts traditionally run in sandboxed environments, this extension provides a human-in-the-loop GUI to approve every file change and terminal command, providing a safe and accessible way to explore the potential of agentic AI.
+Thanks to [Claude Sonnet's agentic coding capabilities](https://www.anthropic.com/claude/sonnet), HAI can handle complex software development tasks step-by-step. With tools that let him create & edit files, explore large projects, use the browser, and execute terminal commands (after you grant permission), he can assist you in ways that go beyond code completion or tech support. HAI can even use the Model Context Protocol (MCP) to create new tools and extend his own capabilities. While autonomous AI scripts traditionally run in sandboxed environments, this extension provides a human-in-the-loop GUI to approve every file change and terminal command, providing a safe and accessible way to explore the potential of agentic AI.
 
 1. Enter your task and add images to convert mockups into functional apps or fix bugs with screenshots.
 2. HAI starts by analyzing your file structure & source code ASTs, running regex searches, and reading relevant files to get up to speed in existing projects. By carefully managing what information is added to context, HAI can provide valuable assistance even for large, complex projects without overwhelming the context window.

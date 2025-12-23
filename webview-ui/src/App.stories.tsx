@@ -48,7 +48,7 @@ const meta: Meta<typeof MockApp> = {
 		docs: {
 			description: {
 				component: `
-The ChatView component is the main interface for interacting with Cline. It provides a comprehensive chat experience with AI assistance, task management, and various tools.
+The ChatView component is the main interface for interacting with HAI. It provides a comprehensive chat experience with AI assistance, task management, and various tools.
 
 **Key Features:**
 - **Task Management**: Create, resume, and manage AI-assisted tasks

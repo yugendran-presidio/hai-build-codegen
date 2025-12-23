@@ -73,7 +73,7 @@ const ErrorRow = memo(({ message, errorType, apiRequestFailedMessage, apiReqStre
 									It seems like you're having Windows PowerShell issues, please see this{" "}
 									<a
 										className="underline text-inherit"
-										href="https://github.com/cline/cline/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22">
+										href="https://github.com/presidio-oss/hai-build-codegen/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22">
 										troubleshooting guide
 									</a>
 									.
@@ -117,7 +117,7 @@ const ErrorRow = memo(({ message, errorType, apiRequestFailedMessage, apiReqStre
 				return (
 					<div className="flex flex-col p-2 rounded text-xs bg-(--vscode-textBlockQuote-background) text-(--vscode-foreground) opacity-80">
 						<div>
-							Cline tried to access <code>{message.text}</code> which is blocked by the <code>.clineignore</code>
+							HAI tried to access <code>{message.text}</code> which is blocked by the <code>.clineignore</code>
 							file.
 						</div>
 					</div>
