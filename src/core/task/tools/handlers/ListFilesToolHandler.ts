@@ -85,16 +85,16 @@ export class ListFilesToolHandler implements IFullyManagedTool {
 		}
 
 		// Check clineignore access
-		const accessValidation = this.validator.checkClineIgnorePath(relDirPath!)
+		const accessValidation = this.validator.checkHAIIgnorePath(relDirPath!)
 		if (!accessValidation.ok) {
 			await config.callbacks.say("clineignore_error", relDirPath)
-			return formatResponse.toolError(formatResponse.clineIgnoreError(relDirPath!))
+			return formatResponse.toolError(formatResponse.haiIgnoreError(relDirPath!))
 		}
 
 		// Execute the actual list files operation
 		const [files, didHitLimit] = await listFiles(absolutePath, recursive, 200)
 
-		const result = formatResponse.formatFilesList(absolutePath, files, didHitLimit, config.services.clineIgnoreController)
+		const result = formatResponse.formatFilesList(absolutePath, files, didHitLimit, config.services.haiIgnoreController)
 
 		// Handle approval flow
 		const sharedMessageProps = {
@@ -124,7 +124,7 @@ export class ListFilesToolHandler implements IFullyManagedTool {
 			)
 		} else {
 			// Manual approval flow
-			const notificationMessage = `Cline wants to view directory ${getWorkspaceBasename(absolutePath, "ListFilesToolHandler.notification")}/`
+			const notificationMessage = `HAI wants to view directory ${getWorkspaceBasename(absolutePath, "ListFilesToolHandler.notification")}/`
 
 			// Show notification
 			showNotificationForApproval(notificationMessage, config.autoApprovalSettings.enableNotifications)

@@ -64,7 +64,7 @@ describe("ErrorRow", () => {
 		).toBeInTheDocument()
 	})
 
-	it("renders clineignore error", () => {
+	it("renders haiignore error", () => {
 		const clineignoreMessage = { ...mockMessage, text: "/path/to/file.txt" }
 		render(<ErrorRow errorType="clineignore_error" message={clineignoreMessage} />)
 

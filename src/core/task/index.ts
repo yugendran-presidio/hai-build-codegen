@@ -21,7 +21,6 @@ import {
 } from "@core/context/instructions/user-instructions/external-rules"
 import { sendPartialMessageEvent } from "@core/controller/ui/subscribeToPartialMessage"
 import { executePreCompactHookWithCleanup, HookCancellationError, HookExecution } from "@core/hooks/precompact-executor"
-import { ClineIgnoreController } from "@core/ignore/ClineIgnoreController"
 import { parseMentions } from "@core/mentions"
 import { summarizeTask } from "@core/prompts/contextManagement"
 import { formatResponse } from "@core/prompts/responses"
@@ -70,6 +69,7 @@ import pWaitFor from "p-wait-for"
 import * as path from "path"
 import { ulid } from "ulid"
 import * as vscode from "vscode"
+import { HAIIgnoreController } from "@/core/ignore/HAIIgnoreController"
 import type { SystemPromptContext } from "@/core/prompts/system-prompt"
 import { getSystemPrompt } from "@/core/prompts/system-prompt"
 import { HostProvider } from "@/hosts/host-provider"
@@ -195,7 +195,7 @@ export class Task {
 	private diffViewProvider: DiffViewProvider
 	public checkpointManager?: ICheckpointManager
 	private initialCheckpointCommitPromise?: Promise<string | undefined>
-	private clineIgnoreController: ClineIgnoreController
+	private haiIgnoreController: HAIIgnoreController
 	private toolExecutor: ToolExecutor
 	/**
 	 * Whether the task is using native tool calls.
@@ -270,7 +270,7 @@ export class Task {
 		this.postStateToWebview = postStateToWebview
 		this.reinitExistingTaskFromId = reinitExistingTaskFromId
 		this.cancelTask = cancelTask
-		this.clineIgnoreController = new ClineIgnoreController(cwd)
+		this.haiIgnoreController = new HAIIgnoreController(cwd)
 		this.taskLockAcquired = taskLockAcquired
 
 		// Determine terminal execution mode and create appropriate terminal manager
@@ -528,7 +528,7 @@ export class Task {
 			this.diffViewProvider,
 			this.mcpHub,
 			this.fileContextTracker,
-			this.clineIgnoreController,
+			this.haiIgnoreController,
 			this.contextManager,
 			this.stateManager,
 			cwd,
@@ -928,9 +928,9 @@ export class Task {
 
 	public async startTask(task?: string, images?: string[], files?: string[]): Promise<void> {
 		try {
-			await this.clineIgnoreController.initialize()
+			await this.haiIgnoreController.initialize()
 		} catch (error) {
-			console.error("Failed to initialize ClineIgnoreController:", error)
+			console.error("Failed to initialize HAIIgnoreController:", error)
 			// Optionally, inform the user or handle the error appropriately
 		}
 		// conversationHistory (for API) and clineMessages (for webview) need to be in sync
@@ -1050,9 +1050,9 @@ export class Task {
 
 	public async resumeTaskFromHistory() {
 		try {
-			await this.clineIgnoreController.initialize()
+			await this.haiIgnoreController.initialize()
 		} catch (error) {
-			console.error("Failed to initialize ClineIgnoreController:", error)
+			console.error("Failed to initialize HAIIgnoreController:", error)
 			// Optionally, inform the user or handle the error appropriately
 		}
 
@@ -1513,7 +1513,7 @@ export class Task {
 			this.terminalManager.disposeAll()
 			this.urlContentFetcher.closeBrowser()
 			await this.browserSession.dispose()
-			this.clineIgnoreController.dispose()
+			this.haiIgnoreController.dispose()
 			this.fileContextTracker.dispose()
 			// need to await for when we want to make sure directories/files are reverted before
 			// re-starting the task from a checkpoint
@@ -1745,10 +1745,10 @@ export class Task {
 
 		const localAgentsRulesFileInstructions = await getLocalAgentsRules(this.cwd, agentsLocalToggles)
 
-		const clineIgnoreContent = this.clineIgnoreController.clineIgnoreContent
-		let clineIgnoreInstructions: string | undefined
-		if (clineIgnoreContent) {
-			clineIgnoreInstructions = formatResponse.clineIgnoreInstructions(clineIgnoreContent)
+		const haiIgnoreContent = this.haiIgnoreController.haiIgnoreContent
+		let haiIgnoreInstructions: string | undefined
+		if (haiIgnoreContent) {
+			haiIgnoreInstructions = formatResponse.haiIgnoreInstructions(haiIgnoreContent)
 		}
 
 		// Prepare multi-root workspace information if enabled
@@ -1781,7 +1781,7 @@ export class Task {
 			localCursorRulesDirInstructions,
 			localWindsurfRulesFileInstructions,
 			localAgentsRulesFileInstructions,
-			clineIgnoreInstructions,
+			haiIgnoreInstructions,
 			preferredLanguageInstructions,
 			browserSettings: this.stateManager.getGlobalSettingsKey("browserSettings"),
 			yoloModeToggled: this.stateManager.getGlobalSettingsKey("yoloModeToggled"),
@@ -3152,8 +3152,8 @@ export class Task {
 		const filteredVisiblePaths = await filterExistingFiles(rawVisiblePaths)
 		const visibleFilePaths = filteredVisiblePaths.map((absolutePath) => path.relative(this.cwd, absolutePath))
 
-		// Filter paths through clineIgnoreController
-		const allowedVisibleFiles = this.clineIgnoreController
+		// Filter paths through haiIgnoreController
+		const allowedVisibleFiles = this.haiIgnoreController
 			.filterPaths(visibleFilePaths)
 			.map((p) => p.toPosix())
 			.join("\n")
@@ -3169,8 +3169,8 @@ export class Task {
 		const filteredOpenTabPaths = await filterExistingFiles(rawOpenTabPaths)
 		const openTabPaths = filteredOpenTabPaths.map((absolutePath) => path.relative(this.cwd, absolutePath))
 
-		// Filter paths through clineIgnoreController
-		const allowedOpenTabs = this.clineIgnoreController
+		// Filter paths through haiIgnoreController
+		const allowedOpenTabs = this.haiIgnoreController
 			.filterPaths(openTabPaths)
 			.map((p) => p.toPosix())
 			.join("\n")
@@ -3275,7 +3275,7 @@ export class Task {
 				details += "(Desktop files not shown automatically. Use list_files to explore if needed.)"
 			} else {
 				const [files, didHitLimit] = await listFiles(this.cwd, true, 200)
-				const result = formatResponse.formatFilesList(this.cwd, files, didHitLimit, this.clineIgnoreController)
+				const result = formatResponse.formatFilesList(this.cwd, files, didHitLimit, this.haiIgnoreController)
 				details += result
 			}
 

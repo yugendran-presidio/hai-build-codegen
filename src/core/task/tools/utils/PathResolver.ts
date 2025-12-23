@@ -23,7 +23,7 @@ export class PathResolver {
 	}
 
 	validate(resolvedPath: string): { ok: boolean; error?: string } {
-		return this.validator.checkClineIgnorePath(resolvedPath)
+		return this.validator.checkHAIIgnorePath(resolvedPath)
 	}
 
 	async resolveAndValidate(

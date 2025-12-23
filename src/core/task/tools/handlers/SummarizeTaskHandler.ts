@@ -152,8 +152,8 @@ export class SummarizeTaskHandler implements IToolHandler, IPartialBlockHandler 
 						break
 					}
 
-					// Check .clineignore first and skip ignored files
-					const accessValidation = this.validator.checkClineIgnorePath(relPath)
+					// Check .haiignore first and skip ignored files
+					const accessValidation = this.validator.checkHAIIgnorePath(relPath)
 					if (!accessValidation.ok) {
 						continue
 					}

@@ -64,11 +64,11 @@ export class ReadFileToolHandler implements IFullyManagedTool {
 			return await config.callbacks.sayAndCreateMissingParamError(this.name, "path")
 		}
 
-		// Check clineignore access
-		const accessValidation = this.validator.checkClineIgnorePath(relPath!)
+		// Check haiignore access
+		const accessValidation = this.validator.checkHAIIgnorePath(relPath!)
 		if (!accessValidation.ok) {
 			await config.callbacks.say("clineignore_error", relPath)
-			return formatResponse.toolError(formatResponse.clineIgnoreError(relPath!))
+			return formatResponse.toolError(formatResponse.haiIgnoreError(relPath!))
 		}
 
 		config.taskState.consecutiveMistakeCount = 0
@@ -115,7 +115,7 @@ export class ReadFileToolHandler implements IFullyManagedTool {
 			)
 		} else {
 			// Manual approval flow
-			const notificationMessage = `Cline wants to read ${getWorkspaceBasename(absolutePath, "ReadFileToolHandler.notification")}`
+			const notificationMessage = `HAI wants to read ${getWorkspaceBasename(absolutePath, "ReadFileToolHandler.notification")}`
 
 			// Show notification
 			showNotificationForApproval(notificationMessage, config.autoApprovalSettings.enableNotifications)

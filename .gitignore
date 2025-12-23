@@ -12,6 +12,7 @@ tmp
 pnpm-lock.yaml
 
 .clineignore
+.haiignore
 .venv
 .actrc
 

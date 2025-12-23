@@ -468,15 +468,15 @@ func (h *SayHandler) handleDeletedAPIReqs(msg *types.ClineMessage, dc *DisplayCo
 	return nil
 }
 
-// handleClineignoreError handles .clineignore error messages
+// handleClineignoreError handles .haiignore error messages
 func (h *SayHandler) handleClineignoreError(msg *types.ClineMessage, dc *DisplayContext) error {
 	if dc.SystemRenderer != nil {
 		return dc.SystemRenderer.RenderInfo(
 			"Access Denied",
-			fmt.Sprintf("Cline tried to access `%s` which is blocked by the .clineignore file.", msg.Text),
+			fmt.Sprintf("HAI tried to access `%s` which is blocked by the .haiignore file.", msg.Text),
 		)
 	}
-	return dc.Renderer.RenderMessage("WARNING", fmt.Sprintf("Access Denied - Cline tried to access %s which is blocked by the .clineignore file", msg.Text), true)
+	return dc.Renderer.RenderMessage("WARNING", fmt.Sprintf("Access Denied - HAI tried to access %s which is blocked by the .haiignore file", msg.Text), true)
 }
 
 func (h *SayHandler) handleCheckpointCreated(msg *types.ClineMessage, dc *DisplayContext, timestamp string) error {

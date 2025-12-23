@@ -16,7 +16,7 @@ export async function getUserInstructions(variant: PromptVariant, context: Syste
 		context.localCursorRulesDirInstructions,
 		context.localWindsurfRulesFileInstructions,
 		context.localAgentsRulesFileInstructions,
-		context.clineIgnoreInstructions,
+		context.haiIgnoreInstructions,
 		context.preferredLanguageInstructions,
 	)
 
@@ -39,7 +39,7 @@ function buildUserInstructions(
 	localCursorRulesDirInstructions?: string,
 	localWindsurfRulesFileInstructions?: string,
 	localAgentsRulesFileInstructions?: string,
-	clineIgnoreInstructions?: string,
+	haiIgnoreInstructions?: string,
 	preferredLanguageInstructions?: string,
 ): string | undefined {
 	const customInstructions = []
@@ -64,8 +64,8 @@ function buildUserInstructions(
 	if (localAgentsRulesFileInstructions) {
 		customInstructions.push(localAgentsRulesFileInstructions)
 	}
-	if (clineIgnoreInstructions) {
-		customInstructions.push(clineIgnoreInstructions)
+	if (haiIgnoreInstructions) {
+		customInstructions.push(haiIgnoreInstructions)
 	}
 	if (customInstructions.length === 0) {
 		return undefined

@@ -89,7 +89,7 @@ export class SearchFilesToolHandler implements IFullyManagedTool {
 				absolutePath,
 				regex,
 				filePattern,
-				config.services.clineIgnoreController,
+				config.services.haiIgnoreController,
 			)
 
 			// Parse the result count from the first line
@@ -323,7 +323,7 @@ export class SearchFilesToolHandler implements IFullyManagedTool {
 			)
 		} else {
 			// Manual approval flow
-			const notificationMessage = `Cline wants to search files for ${regex}`
+			const notificationMessage = `HAI wants to search files for ${regex}`
 
 			// Show notification
 			showNotificationForApproval(notificationMessage, config.autoApprovalSettings.enableNotifications)

@@ -1,6 +1,5 @@
 import { ApiHandler } from "@core/api"
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker"
-import { ClineIgnoreController } from "@core/ignore/ClineIgnoreController"
 import { DiffViewProvider } from "@integrations/editor/DiffViewProvider"
 import { BrowserSession } from "@services/browser/BrowserSession"
 import { UrlContentFetcher } from "@services/browser/UrlContentFetcher"
@@ -10,6 +9,7 @@ import { ClineContent } from "@shared/messages/content"
 import { ClineDefaultTool } from "@shared/tools"
 import { ClineAskResponse } from "@shared/WebviewMessage"
 import * as vscode from "vscode"
+import { HAIIgnoreController } from "@/core/ignore/HAIIgnoreController"
 import { isGPT5ModelFamily, modelDoesntSupportWebp } from "@/utils/model-utils"
 import { ToolUse } from "../assistant-message"
 import { ContextManager } from "../context/context-management/ContextManager"
@@ -76,7 +76,7 @@ export class ToolExecutor {
 		private diffViewProvider: DiffViewProvider,
 		private mcpHub: McpHub,
 		private fileContextTracker: FileContextTracker,
-		private clineIgnoreController: ClineIgnoreController,
+		private haiIgnoreController: HAIIgnoreController,
 		private contextManager: ContextManager,
 		private stateManager: StateManager,
 
@@ -162,7 +162,7 @@ export class ToolExecutor {
 				urlContentFetcher: this.urlContentFetcher,
 				diffViewProvider: this.diffViewProvider,
 				fileContextTracker: this.fileContextTracker,
-				clineIgnoreController: this.clineIgnoreController,
+				haiIgnoreController: this.haiIgnoreController,
 				contextManager: this.contextManager,
 				stateManager: this.stateManager,
 			},
@@ -200,7 +200,7 @@ export class ToolExecutor {
 	 * Register all tool handlers with the coordinator
 	 */
 	private registerToolHandlers(): void {
-		const validator = new ToolValidator(this.clineIgnoreController)
+		const validator = new ToolValidator(this.haiIgnoreController)
 
 		// Register all tool handlers
 		this.coordinator.register(new ListFilesToolHandler(validator))

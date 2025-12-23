@@ -115,11 +115,11 @@ export class ExecuteCommandToolHandler implements IFullyManagedTool {
 			// If no hint, use primary workspace (cwd)
 		}
 
-		// Check clineignore validation for command
-		const ignoredFileAttemptedToAccess = config.services.clineIgnoreController.validateCommand(actualCommand)
+		// Check haiIgnore validation for command
+		const ignoredFileAttemptedToAccess = config.services.haiIgnoreController.validateCommand(actualCommand)
 		if (ignoredFileAttemptedToAccess) {
 			await config.callbacks.say("clineignore_error", ignoredFileAttemptedToAccess)
-			return formatResponse.toolError(formatResponse.clineIgnoreError(ignoredFileAttemptedToAccess))
+			return formatResponse.toolError(formatResponse.haiIgnoreError(ignoredFileAttemptedToAccess))
 		}
 
 		let didAutoApprove = false
@@ -171,7 +171,7 @@ export class ExecuteCommandToolHandler implements IFullyManagedTool {
 		} else {
 			// Manual approval flow
 			showNotificationForApproval(
-				`Cline wants to execute a command: ${actualCommand}`,
+				`HAI wants to execute a command: ${actualCommand}`,
 				config.autoApprovalSettings.enableNotifications,
 			)
 

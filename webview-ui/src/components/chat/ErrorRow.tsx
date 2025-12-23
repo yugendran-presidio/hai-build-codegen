@@ -117,7 +117,7 @@ const ErrorRow = memo(({ message, errorType, apiRequestFailedMessage, apiReqStre
 				return (
 					<div className="flex flex-col p-2 rounded text-xs bg-(--vscode-textBlockQuote-background) text-(--vscode-foreground) opacity-80">
 						<div>
-							HAI tried to access <code>{message.text}</code> which is blocked by the <code>.clineignore</code>
+							HAI tried to access <code>{message.text}</code> which is blocked by the <code>.haiignore</code>
 							file.
 						</div>
 					</div>
