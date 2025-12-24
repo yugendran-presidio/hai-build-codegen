@@ -1,3 +1,16 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+/* Disable Tailwind's CSS reset to preserve existing styles */
+/* @import "tailwindcss/preflight.css" layer(base); */
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@config "../tailwind.config.mjs";
+
+/* Import Azeret Mono font from local package */
+@import "@fontsource/azeret-mono/300.css";
+@import "@fontsource/azeret-mono/400.css";
+@import "@fontsource/azeret-mono/700.css";
+
 textarea:focus {
 	outline: 1.5px solid var(--vscode-focusBorder, #007fd4);
 }
@@ -22,7 +35,6 @@ body {
 	line-height: 1.25;
 	height: 100%;
 	width: 100%;
-	background-color: var(--vscode-sideBar-background);
 }
 
 #root {
@@ -51,7 +63,7 @@ body:focus-within .code-block-scrollable {
 }
 
 .scrollable::-webkit-scrollbar-corner {
-	background-color: transparent;
+	background-color: transparent !important;
 }
 
 .scrollable::-webkit-scrollbar-thumb {
@@ -59,7 +71,7 @@ body:focus-within .code-block-scrollable {
 	border-color: inherit;
 	border-right-style: inset;
 	border-right-width: calc(100vw + 100vh);
-	border-radius: unset;
+	border-radius: unset !important;
 }
 
 .scrollable::-webkit-scrollbar-thumb:hover {
@@ -154,16 +166,6 @@ vscode-dropdown::part(listbox) {
 
 /* Context mentions */
 
-/* Needs to match the highlightLayerRef in ChatTextArea for proper positioning */
-.mention-context-textarea-highlight,
-.mention-context-highlight,
-.mention-context-highlight-with-shadow,
-.slash-command-match-textarea-highlight {
-	font-family: var(--vscode-font-family);
-	font-size: var(--vscode-editor-font-size);
-	line-height: var(--vscode-editor-line-height);
-}
-
 .mention-context-textarea-highlight {
 	background-color: color-mix(in srgb, var(--vscode-badge-foreground) 30%, transparent);
 	border-radius: 3px;
@@ -193,27 +195,118 @@ vscode-dropdown::part(listbox) {
 	color: transparent;
 }
 
-/* Pulse animation for running command indicator */
-@keyframes pulse {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.5;
+.hai-task-list-wrapper {
+	overflow-y: auto;
+	height: 100%;
+	margin-top: 113px;
+}
+
+.hai-task-list-header {
+	padding: 1rem;
+	position: absolute;
+	top: 0;
+	background: var(--background);
+	width: calc(100% - 2rem);
+}
+
+.hai-task-list {
+	padding: 0;
+	margin: 0 16px;
+	list-style-type: none;
+	overflow-y: auto;
+}
+.hai-task-list-item {
+	background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 65%, transparent);
+	border-bottom: 1px solid var(--checkbox-border);
+	padding: 1rem;
+}
+.hai-task-list-item:last-child {
+	border-bottom: none;
+}
+.hai-task-list-item p {
+	margin: 0 0 8px 0;
+}
+.hai-task-list-item:hover,
+.accordion-header:hover {
+	background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 100%, transparent);
+	border-radius: 4px;
+	border-color: transparent;
+}
+
+.hai-story-accordion {
+	border-radius: 4px;
+}
+
+.accordion-header {
+	padding: 1rem;
+	width: 100%;
+	text-align: left;
+	border: none;
+	cursor: pointer;
+	font-size: 1rem;
+	background: var(--background);
+	color: var(--vscode-editor-foreground);
+}
+.accordion-header p {
+	font-size: 0.823rem;
+	margin-bottom: 0;
+}
+
+.accordion-content {
+	background-color: var(--background);
+}
+
+.accordion-content.open,
+.accordion-header.open {
+	border-left: 4px solid;
+}
+
+.hai-logo {
+	color: var(--vscode-editor-foreground);
+	fill: var(--vscode-editor-foreground);
+}
+
+.card-container {
+	background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 65%, transparent);
+	border-radius: 4px;
+	position: relative;
+	overflow: hidden;
+	opacity: 0.8;
+	cursor: pointer;
+}
+
+.card-container:hover {
+	background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 100%, transparent);
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.getting-started-item {
+	margin-bottom: 12px;
+}
+
+.getting-started-title {
+	color: var(--vscode-descriptionForeground);
+	font-weight: 500;
+	font-size: 0.85em;
+	text-transform: uppercase;
+}
+
+.tiles-container {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 12px;
+	margin-top: 20px;
+}
+
+@media (max-width: 800px) {
+	.tiles-container {
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
-/* Fix tooltip arrow lag - disable animations on tooltips */
-[data-slot="tooltip-content"],
-[data-slot="tooltip-content"] * {
-	animation: none !important;
-	transition: none !important;
-}
-
-/* Fix popover arrow lag - disable animations on popovers */
-[data-slot="popover-content"],
-[data-slot="popover-content"] * {
-	animation: none !important;
-	transition: none !important;
+@media (max-width: 400px) {
+	.tiles-container {
+		grid-template-columns: 1fr;
+	}
 }

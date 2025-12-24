@@ -165,6 +165,12 @@
 				"when": "cline.isDevMode"
 			},
 			{
+				"command": "hai.haiBuildTaskListClicked",
+				"title": "HAI Tasks",
+				"icon": "$(checklist)",
+				"category": "HAI Build"
+			},
+			{
 				"command": "cline.addToChat",
 				"title": "Add to Cline",
 				"category": "Cline"
@@ -266,6 +272,11 @@
 				{
 					"command": "cline.historyButtonClicked",
 					"group": "navigation@3",
+					"when": "view == claude-dev.SidebarProvider"
+				},
+				{
+					"command": "hai.haiBuildTaskListClicked",
+					"group": "navigation@4",
 					"when": "view == claude-dev.SidebarProvider"
 				},
 				{
