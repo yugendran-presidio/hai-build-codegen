@@ -507,6 +507,7 @@
 		"image-size": "^2.0.2",
 		"isbinaryfile": "^5.0.2",
 		"jschardet": "^3.1.4",
+		"langfuse": "^3.38.6",
 		"mammoth": "^1.11.0",
 		"nanoid": "^5.1.6",
 		"nice-grpc": "^2.1.12",
@@ -535,6 +536,7 @@
 		"undici": "^7.16.0",
 		"uuid": "^11.1.0",
 		"vscode-uri": "^3.1.0",
+		"watcher": "^2.3.1",
 		"web-tree-sitter": "^0.22.6",
 		"zod": "^3.24.2"
 	},

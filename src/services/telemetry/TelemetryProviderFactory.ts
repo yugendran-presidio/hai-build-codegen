@@ -1,7 +1,9 @@
+import { HaiConfig } from "@/shared/hai-config"
 import { getValidOpenTelemetryConfig } from "@/shared/services/config/otel-config"
 import { isPostHogConfigValid, posthogConfig } from "@/shared/services/config/posthog-config"
 import { Logger } from "../logging/Logger"
 import type { ITelemetryProvider, TelemetryProperties, TelemetrySettings } from "./providers/ITelemetryProvider"
+import { LangfuseProvider } from "./providers/LangfuseProvider"
 import { OpenTelemetryClientProvider } from "./providers/opentelemetry/OpenTelemetryClientProvider"
 import { OpenTelemetryTelemetryProvider } from "./providers/opentelemetry/OpenTelemetryTelemetryProvider"
 import { PostHogClientProvider } from "./providers/posthog/PostHogClientProvider"
@@ -10,7 +12,7 @@ import { PostHogTelemetryProvider } from "./providers/posthog/PostHogTelemetryPr
 /**
  * Supported telemetry provider types
  */
-export type TelemetryProviderType = "posthog" | "no-op" | "opentelemetry"
+export type TelemetryProviderType = "posthog" | "no-op" | "opentelemetry" | "langfuse"
 
 /**
  * Configuration for telemetry providers
@@ -18,6 +20,7 @@ export type TelemetryProviderType = "posthog" | "no-op" | "opentelemetry"
 export type TelemetryProviderConfig =
 	| { type: "posthog"; apiKey?: string; host?: string }
 	| { type: "opentelemetry"; enabled?: boolean }
+	| { type: "langfuse"; apiKey?: string; publicKey?: string; apiUrl?: string }
 	| { type: "no-op" }
 
 /**
@@ -30,7 +33,7 @@ export class TelemetryProviderFactory {
 	 * Supports dual tracking during transition period
 	 */
 	public static async createProviders(): Promise<ITelemetryProvider[]> {
-		const configs = TelemetryProviderFactory.getDefaultConfigs()
+		const configs = await TelemetryProviderFactory.getDefaultConfigs()
 		const providers: ITelemetryProvider[] = []
 
 		for (const config of configs) {
@@ -58,6 +61,13 @@ export class TelemetryProviderFactory {
 	 */
 	private static async createProvider(config: TelemetryProviderConfig): Promise<ITelemetryProvider> {
 		switch (config.type) {
+			case "langfuse": {
+				if (config.apiKey && config.publicKey) {
+					return new LangfuseProvider(config.apiKey, config.publicKey, config.apiUrl)
+				}
+				Logger.info("TelemetryProviderFactory: Langfuse credentials not available")
+				return new NoOpTelemetryProvider()
+			}
 			case "posthog": {
 				const sharedClient = PostHogClientProvider.getClient()
 				if (sharedClient) {
@@ -86,13 +96,26 @@ export class TelemetryProviderFactory {
 	 * Gets the default telemetry provider configuration
 	 * @returns Default configuration using available providers
 	 */
-	public static getDefaultConfigs(): TelemetryProviderConfig[] {
+	public static async getDefaultConfigs(): Promise<TelemetryProviderConfig[]> {
 		const configs: TelemetryProviderConfig[] = []
 
+		// Add Langfuse provider first (primary)
+		const langfuseConfig = await HaiConfig.getLangfuseConfig()
+		if (langfuseConfig && langfuseConfig.apiKey && langfuseConfig.publicKey) {
+			configs.push({
+				type: "langfuse",
+				apiKey: langfuseConfig.apiKey,
+				publicKey: langfuseConfig.publicKey,
+				apiUrl: langfuseConfig.apiUrl,
+			})
+		}
+
+		// Add PostHog provider second (secondary)
 		if (isPostHogConfigValid(posthogConfig)) {
 			configs.push({ type: "posthog", ...posthogConfig })
 		}
 
+		// Add OpenTelemetry provider last (optional)
 		const otelConfig = getValidOpenTelemetryConfig()
 		if (otelConfig) {
 			configs.push({ type: "opentelemetry", ...otelConfig })

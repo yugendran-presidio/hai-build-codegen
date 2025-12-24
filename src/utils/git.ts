@@ -1,4 +1,4 @@
-import { exec } from "child_process"
+import { exec, execSync } from "child_process"
 import { promisify } from "util"
 
 const execAsync = promisify(exec)
@@ -306,4 +306,16 @@ function truncateOutput(content: string): string {
  */
 export async function isGitRepository(dirPath: string): Promise<boolean> {
 	return await checkGitRepo(dirPath)
+}
+
+// TAG:HAI
+export function getGitUserInfo(): { username: string; email: string } {
+	try {
+		const username = execSync("git config --global user.name", { encoding: "utf8" }).trim()
+		const email = execSync("git config --global user.email", { encoding: "utf8" }).trim()
+		return { username, email }
+	} catch (error) {
+		console.error("Error fetching Git user info:", error)
+		return { username: "Anonymous", email: "unknown@example.com" }
+	}
 }

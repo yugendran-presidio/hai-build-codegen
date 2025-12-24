@@ -1,0 +1,10 @@
+# HAI Configuration File
+
+# Langfuse Configuration
+langfuse.apiUrl=https://cloud.langfuse.com  # Optional, defaults to cloud.langfuse.com
+langfuse.apiKey=your-api-key
+langfuse.publicKey=your-public-key
+
+# PostHog Configuration (optional)
+posthog.url=https://app.posthog.com
+posthog.apiKey=your-posthog-api-key

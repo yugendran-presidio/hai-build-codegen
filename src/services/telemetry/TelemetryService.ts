@@ -314,8 +314,15 @@ export class TelemetryService {
 		private providers: ITelemetryProvider[],
 		private telemetryMetadata: TelemetryMetadata,
 	) {
-		this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
-		console.info(`[TelemetryService] Initialized with ${providers.length} telemetry provider(s)`)
+		// Enable telemetry by default
+		this.providers.forEach((provider) => {
+			provider.setOptIn(true)
+		})
+		// Delay telemetry enabled event to ensure providers are ready
+		setTimeout(() => {
+			this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
+			console.info(`[TelemetryService] Initialized with ${providers.length} telemetry provider(s)`)
+		}, 0)
 	}
 
 	/**
@@ -2111,6 +2118,20 @@ export class TelemetryService {
 			const contextStr = context ? ` [Context: ${context}]` : ""
 			console.error(`[Telemetry] Failed to capture telemetry${contextStr}:`, error)
 		}
+	}
+
+	/**
+	 * Updates the telemetry providers with new instances
+	 * Used when telemetry configuration changes
+	 * @param providers The new telemetry providers
+	 */
+	public updateProviders(providers: ITelemetryProvider[]): void {
+		// Dispose old providers
+		this.providers.forEach((provider) => {
+			void provider.dispose()
+		})
+		// Set new providers
+		this.providers = providers
 	}
 
 	/**

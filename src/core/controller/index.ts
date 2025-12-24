@@ -33,6 +33,7 @@ import { LogoutReason } from "@/services/auth/types"
 import { featureFlagsService } from "@/services/feature-flags"
 import { getDistinctId } from "@/services/logging/distinctId"
 import { telemetryService } from "@/services/telemetry"
+import { TelemetryProviderFactory } from "@/services/telemetry/TelemetryProviderFactory"
 import { getAxiosSettings } from "@/shared/net"
 import { ShowMessageType } from "@/shared/proto/host/window"
 import type { AuthState } from "@/shared/proto/index.cline"
@@ -1064,5 +1065,12 @@ export class Controller {
 		} catch (error) {
 			console.error("Failed to track banner event:", error)
 		}
+	}
+
+	// TAG: HAI
+	async updateTelemetryConfig() {
+		// Refresh PostHog client and update Langfuse instance in telemetry
+		const providers = await TelemetryProviderFactory.createProviders()
+		telemetryService.updateProviders(providers)
 	}
 }
