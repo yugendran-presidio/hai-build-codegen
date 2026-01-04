@@ -68,7 +68,7 @@ describe("ErrorRow", () => {
 		const clineignoreMessage = { ...mockMessage, text: "/path/to/file.txt" }
 		render(<ErrorRow errorType="clineignore_error" message={clineignoreMessage} />)
 
-		expect(screen.getByText(/Cline tried to access/)).toBeInTheDocument()
+		expect(screen.getByText(/HAI tried to access/)).toBeInTheDocument()
 		expect(screen.getByText("/path/to/file.txt")).toBeInTheDocument()
 	})
 
@@ -154,7 +154,7 @@ describe("ErrorRow", () => {
 			expect(screen.getByText("troubleshooting guide")).toBeInTheDocument()
 			expect(screen.getByRole("link", { name: "troubleshooting guide" })).toHaveAttribute(
 				"href",
-				"https://github.com/cline/cline/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22",
+				"https://github.com/presidio-oss/hai-build-codegen/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22",
 			)
 		})
 
