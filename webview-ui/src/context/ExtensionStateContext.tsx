@@ -58,6 +58,7 @@ export interface ExtensionStateContextType extends ExtensionState {
 	showAnnouncement: boolean
 	showChatModelSelector: boolean
 	expandTaskHeader: boolean
+	showHaiTaskList: boolean
 
 	// Setters
 	setDictationSettings: (value: DictationSettings) => void
@@ -100,6 +101,7 @@ export interface ExtensionStateContextType extends ExtensionState {
 	navigateToHistory: () => void
 	navigateToAccount: () => void
 	navigateToChat: () => void
+	navigateToHaiTaskList: () => void
 
 	// Hide functions
 	hideSettings: () => void
@@ -107,6 +109,8 @@ export interface ExtensionStateContextType extends ExtensionState {
 	hideAccount: () => void
 	hideAnnouncement: () => void
 	hideChatModelSelector: () => void
+	// hideExperts: () => void
+	hideHaiTaskList: () => void
 	closeMcpView: () => void
 
 	// Event callbacks
@@ -127,6 +131,8 @@ export const ExtensionStateContextProvider: React.FC<{
 	const [showAccount, setShowAccount] = useState(false)
 	const [showAnnouncement, setShowAnnouncement] = useState(false)
 	const [showChatModelSelector, setShowChatModelSelector] = useState(false)
+	// const [showExperts, setShowExperts] = useState(false)
+	const [showHaiTaskList, setShowHaiTaskList] = useState(false)
 
 	// Helper for MCP view
 	const closeMcpView = useCallback(() => {
@@ -143,6 +149,8 @@ export const ExtensionStateContextProvider: React.FC<{
 	const hideAccount = useCallback(() => setShowAccount(false), [setShowAccount])
 	const hideAnnouncement = useCallback(() => setShowAnnouncement(false), [setShowAnnouncement])
 	const hideChatModelSelector = useCallback(() => setShowChatModelSelector(false), [setShowChatModelSelector])
+	// const hideExperts = useCallback(() => setShowExperts(false), [setShowExperts])
+	const hideHaiTaskList = useCallback(() => setShowHaiTaskList(false), [setShowHaiTaskList])
 
 	// Navigation functions
 	const navigateToMcp = useCallback(
@@ -150,12 +158,13 @@ export const ExtensionStateContextProvider: React.FC<{
 			setShowSettings(false)
 			setShowHistory(false)
 			setShowAccount(false)
+			setShowHaiTaskList(false)
 			if (tab) {
 				setMcpTab(tab)
 			}
 			setShowMcp(true)
 		},
-		[setShowMcp, setMcpTab, setShowSettings, setShowHistory, setShowAccount],
+		[setShowMcp, setMcpTab, setShowSettings, setShowHistory, setShowAccount, setShowHaiTaskList],
 	)
 
 	const navigateToSettings = useCallback(
@@ -163,32 +172,48 @@ export const ExtensionStateContextProvider: React.FC<{
 			setShowHistory(false)
 			closeMcpView()
 			setShowAccount(false)
+			setShowHaiTaskList(false)
 			setSettingsTargetSection(targetSection)
 			setShowSettings(true)
 		},
-		[closeMcpView],
+		[closeMcpView, setShowHaiTaskList],
 	)
 
 	const navigateToHistory = useCallback(() => {
 		setShowSettings(false)
 		closeMcpView()
 		setShowAccount(false)
+		setShowHaiTaskList(false)
 		setShowHistory(true)
-	}, [setShowSettings, closeMcpView, setShowAccount, setShowHistory])
+	}, [setShowSettings, closeMcpView, setShowAccount, setShowHistory, setShowHaiTaskList])
 
 	const navigateToAccount = useCallback(() => {
 		setShowSettings(false)
 		closeMcpView()
 		setShowHistory(false)
+		setShowHaiTaskList(false)
 		setShowAccount(true)
-	}, [setShowSettings, closeMcpView, setShowHistory, setShowAccount])
+	}, [setShowSettings, closeMcpView, setShowHistory, setShowAccount, setShowHaiTaskList])
+
+	const navigateToHaiTaskList = useCallback(() => {
+		setShowSettings(false)
+		closeMcpView()
+		setShowHistory(false)
+		setShowAccount(false)
+		// setShowExperts(false)
+		setShowHaiTaskList(true)
+
+		// Don't automatically load tasks - let the user click "Load Tasks" button
+		// to trigger the file explorer when needed
+	}, [setShowSettings, closeMcpView, setShowHistory, setShowAccount, setShowHaiTaskList])
 
 	const navigateToChat = useCallback(() => {
 		setShowSettings(false)
 		closeMcpView()
 		setShowHistory(false)
 		setShowAccount(false)
-	}, [setShowSettings, closeMcpView, setShowHistory, setShowAccount])
+		setShowHaiTaskList(false)
+	}, [setShowSettings, closeMcpView, setShowHistory, setShowAccount, setShowHaiTaskList])
 
 	const [state, setState] = useState<ExtensionState>({
 		version: "",
@@ -295,6 +320,7 @@ export const ExtensionStateContextProvider: React.FC<{
 	const liteLlmModelsUnsubscribeRef = useRef<(() => void) | null>(null)
 	const workspaceUpdatesUnsubscribeRef = useRef<(() => void) | null>(null)
 	const relinquishControlUnsubscribeRef = useRef<(() => void) | null>(null)
+	const haiBuildTaskListClickedSubscriptionRef = useRef<(() => void) | null>(null)
 
 	// Add ref for callbacks
 	const relinquishControlCallbacks = useRef<Set<() => void>>(new Set())
@@ -559,6 +585,24 @@ export const ExtensionStateContextProvider: React.FC<{
 			},
 		})
 
+		// Set up HAI Build Task List button clicked subscription
+		haiBuildTaskListClickedSubscriptionRef.current = UiServiceClient.subscribeToHaiBuildTaskListClicked(
+			EmptyRequest.create(),
+			{
+				onResponse: () => {
+					// When HAI Build Task List button is clicked, navigate to task list view
+					console.log("[DEBUG] Received HAI Build Task List button clicked event from gRPC stream")
+					navigateToHaiTaskList()
+				},
+				onError: (error) => {
+					console.error("Error in HAI Build Task List button clicked subscription:", error)
+				},
+				onComplete: () => {
+					console.log("HAI Build Task List button clicked subscription completed")
+				},
+			},
+		)
+
 		// Fetch available terminal profiles on launch
 		StateServiceClient.getAvailableTerminalProfiles(EmptyRequest.create({}))
 			.then((response) => {
@@ -660,7 +704,7 @@ export const ExtensionStateContextProvider: React.FC<{
 				didBecomeVisibleUnsubscribeRef.current = null
 			}
 		}
-	}, [])
+	}, [navigateToHaiTaskList])
 
 	const refreshOpenRouterModels = useCallback(() => {
 		ModelsServiceClient.refreshOpenRouterModelsRpc(EmptyRequest.create({}))
@@ -719,6 +763,7 @@ export const ExtensionStateContextProvider: React.FC<{
 		showAccount,
 		showAnnouncement,
 		showChatModelSelector,
+		showHaiTaskList,
 		globalClineRulesToggles: state.globalClineRulesToggles || {},
 		localClineRulesToggles: state.localClineRulesToggles || {},
 		localCursorRulesToggles: state.localCursorRulesToggles || {},
@@ -737,6 +782,7 @@ export const ExtensionStateContextProvider: React.FC<{
 		navigateToHistory,
 		navigateToAccount,
 		navigateToChat,
+		navigateToHaiTaskList,
 
 		// Hide functions
 		hideSettings,
@@ -745,6 +791,8 @@ export const ExtensionStateContextProvider: React.FC<{
 		hideAnnouncement,
 		setShowAnnouncement,
 		hideChatModelSelector,
+		// hideExperts,
+		hideHaiTaskList,
 		setShowWelcome,
 		setOnboardingModels,
 		setShowChatModelSelector,

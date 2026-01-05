@@ -5,14 +5,20 @@ import { combineErrorRetryMessages } from "@shared/combineErrorRetryMessages"
 import { combineHookSequences } from "@shared/combineHookSequences"
 import type { ClineApiReqInfo, ClineMessage } from "@shared/ExtensionMessage"
 import { getApiMetrics } from "@shared/getApiMetrics"
+import { IHaiClineTask } from "@shared/hai-task"
 import { BooleanRequest, StringRequest } from "@shared/proto/cline/common"
-import { useCallback, useEffect, useMemo } from "react"
+import type { UpdateTaskStatusRequest } from "@shared/proto/cline/ui"
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useMount } from "react-use"
 import { normalizeApiConfiguration } from "@/components/settings/utils/providerUtils"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { useShowNavbar } from "@/context/PlatformContext"
 import { FileServiceClient, UiServiceClient } from "@/services/grpc-client"
+import Logo from "../../assets/hai-dark.svg?react"
+import TelemetryBanner from "../common/TelemetryBanner"
 import { Navbar } from "../menu/Navbar"
+import QuickActions from "../welcome/QuickActions"
 import AutoApproveBar from "./auto-approve-menu/AutoApproveBar"
 // Import utilities and hooks from the new structure
 import {
@@ -28,7 +34,6 @@ import {
 	useChatState,
 	useMessageHandlers,
 	useScrollBehavior,
-	WelcomeSection,
 } from "./chat-view"
 
 interface ChatViewProps {
@@ -36,18 +41,30 @@ interface ChatViewProps {
 	showAnnouncement: boolean
 	hideAnnouncement: () => void
 	showHistoryView: () => void
+	showHaiTaskListView: () => void
+
+	// TAG:HAI
+	onTaskSelect: (task: IHaiClineTask | null) => void
+	selectedHaiTask: IHaiClineTask | null
+	haiConfigFolder: string
 }
 
 // Use constants from the imported module
 const MAX_IMAGES_AND_FILES_PER_MESSAGE = CHAT_CONSTANTS.MAX_IMAGES_AND_FILES_PER_MESSAGE
-const QUICK_WINS_HISTORY_THRESHOLD = 3
+// const QUICK_WINS_HISTORY_THRESHOLD = 3
 
-const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryView }: ChatViewProps) => {
+const ChatView = ({
+	isHidden,
+	showHistoryView,
+	showHaiTaskListView,
+	onTaskSelect,
+	selectedHaiTask,
+	haiConfigFolder,
+}: ChatViewProps) => {
 	const showNavbar = useShowNavbar()
 	const {
-		version,
 		clineMessages: messages,
-		taskHistory,
+		// taskHistory,
 		apiConfiguration,
 		telemetrySetting,
 		mode,
@@ -55,8 +72,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		currentFocusChainChecklist,
 		hooksEnabled,
 	} = useExtensionState()
-	const isProdHostedApp = userInfo?.apiBaseUrl === "https://app.cline.bot"
-	const shouldShowQuickWins = isProdHostedApp && (!taskHistory || taskHistory.length < QUICK_WINS_HISTORY_THRESHOLD)
+	// const isProdHostedApp = userInfo?.apiBaseUrl === "https://app.cline.bot"
+	// const shouldShowQuickWins = isProdHostedApp && (!taskHistory || taskHistory.length < QUICK_WINS_HISTORY_THRESHOLD)
 
 	//const task = messages.length > 0 ? (messages[0].say === "task" ? messages[0] : undefined) : undefined) : undefined
 	const task = useMemo(() => messages.at(0), [messages]) // leaving this less safe version here since if the first message is not a task, then the extension is in a bad state and needs to be debugged (see HAI.abort)
@@ -103,6 +120,31 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		setExpandedRows,
 		textAreaRef,
 	} = chatState
+
+	// TAG:HAI - Track last successfully executed task ID
+	const [lastSuccessfullyExecutedTaskId, setLastSuccessfullyExecutedTaskId] = useState<string | undefined>(undefined)
+
+	// TAG:HAI - Reset lastSuccessfullyExecutedTaskId when task changes (new task started or task cleared)
+	useEffect(() => {
+		setLastSuccessfullyExecutedTaskId(undefined)
+	}, [task?.ts])
+
+	// TAG:HAI - Set input value when task is selected
+	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+		selectedHaiTask && setInputValue(`Task: ${selectedHaiTask.list} ${selectedHaiTask.acceptance} ${selectedHaiTask.context}`)
+	}, [selectedHaiTask])
+
+	// TAG:HAI - Track when a task completes successfully
+	useEffect(() => {
+		if (selectedHaiTask && messages.length > 0) {
+			const lastMessage = messages[messages.length - 1]
+			// Check if the last message is a completion_result (task completed)
+			if ((lastMessage.ask === "completion_result" || lastMessage.say === "completion_result") && !lastMessage.partial) {
+				setLastSuccessfullyExecutedTaskId(selectedHaiTask.id)
+			}
+		}
+	}, [messages, selectedHaiTask])
 
 	useEffect(() => {
 		const handleCopy = async (e: ClipboardEvent) => {
@@ -352,15 +394,44 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						task={task}
 					/>
 				) : (
-					<WelcomeSection
-						hideAnnouncement={hideAnnouncement}
-						shouldShowQuickWins={shouldShowQuickWins}
-						showAnnouncement={showAnnouncement}
-						showHistoryView={showHistoryView}
-						taskHistory={taskHistory}
-						telemetrySetting={telemetrySetting}
-						version={version}
-					/>
+					<div
+						style={{
+							flex: "1 1 0", // flex-grow: 1, flex-shrink: 1, flex-basis: 0
+							minHeight: 0,
+							overflowY: "auto",
+							display: "flex",
+							flexDirection: "column",
+							paddingBottom: "10px",
+						}}>
+						<div style={{ height: "auto", maxWidth: "200px", margin: "20px" }}>
+							<Logo className="hai-logo" style={{ height: "100%", width: "100%" }} />
+						</div>
+
+						{telemetrySetting === "unset" && <TelemetryBanner />}
+
+						{/* <CodeIndexWarning
+							style={{
+								margin: "0px 15px",
+								position: "relative",
+								flexShrink: 0,
+							}}
+							type="info"
+						/> */}
+						<div style={{ padding: "0 20px", flexShrink: 0 }}>
+							<h2>How can I help you today?</h2>
+							<p>
+								I can handle complex software development tasks step-by-step. With tools that let me create & edit
+								files, explore complex projects, use the browser, and execute terminal commands (after you grant
+								permission), I can assist you in ways that go beyond code completion or tech support. I can even
+								use MCP to create new tools and extend my own capabilities.
+							</p>
+						</div>
+						<QuickActions
+							onTaskSelect={onTaskSelect}
+							showHaiTaskListView={showHaiTaskListView}
+							showHistoryView={showHistoryView}
+						/>
+					</div>
 				)}
 				{task && (
 					<MessagesArea
@@ -375,6 +446,61 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			</div>
 			<footer className="bg-(--vscode-sidebar-background)" style={{ gridRow: "2" }}>
 				<AutoApproveBar />
+				{/* TAG:HAI - Mark task as completed UI */}
+				{selectedHaiTask?.id &&
+					lastSuccessfullyExecutedTaskId &&
+					selectedHaiTask?.id === lastSuccessfullyExecutedTaskId &&
+					!enableButtons && (
+						<div
+							style={{
+								padding: "12px 15px 12px",
+								backgroundColor: "var(--vscode-editor-background)",
+								borderTop: "1px solid var(--vscode-panel-border)",
+							}}>
+							<p style={{ margin: "0px 0px 6px" }}>Do you want to mark this task as completed?</p>
+							<div style={{ display: "flex" }}>
+								<VSCodeButton
+									appearance="primary"
+									onClick={async () => {
+										try {
+											setLastSuccessfullyExecutedTaskId(undefined)
+
+											const request: UpdateTaskStatusRequest = {
+												metadata: {},
+												folderPath: haiConfigFolder,
+												taskId: selectedHaiTask?.id,
+												status: "Completed",
+											}
+											const response = await UiServiceClient.updateTaskStatus(request)
+											if (response.success) {
+												onTaskSelect(null)
+											} else {
+												console.error("Failed to mark task as completed:", response.message)
+											}
+										} catch (error) {
+											console.error("Failed to mark task as completed:", error)
+										}
+									}}
+									style={{
+										marginRight: "6px",
+										flexGrow: 1,
+									}}>
+									Yes
+								</VSCodeButton>
+								<VSCodeButton
+									appearance="secondary"
+									onClick={() => {
+										setLastSuccessfullyExecutedTaskId(undefined)
+										onTaskSelect(null)
+									}}
+									style={{
+										flexGrow: 1,
+									}}>
+									No
+								</VSCodeButton>
+							</div>
+						</div>
+					)}
 				<ActionButtons
 					chatState={chatState}
 					messageHandlers={messageHandlers}

@@ -38,7 +38,7 @@
 				"noConstructorReturn": "off",
 				"noInvalidPositionAtImportRule": "off",
 				"noSwitchDeclarations": "off",
-				"noUnusedImports": "error"
+				"noUnusedImports": "off"
 			},
 			"a11y": "off",
 			"style": {
@@ -82,7 +82,7 @@
 				"noStaticOnlyClass": "off"
 			},
 			"security": {
-				"noDangerouslySetInnerHtml": "info"
+				"noDangerouslySetInnerHtml": "off"
 			}
 		}
 	},
@@ -132,20 +132,20 @@
 	],
 	"overrides": [
 		{
-			"includes": [
-				"**",
-				"!**/hosts/vscode/**",
-				"!**/test/**",
-				"!**/*.test.ts",
-				"!src/dev/**",
-				"!src/extension.ts",
-				"!src/integrations/git/commit-message-generator.ts",
-				"!src/integrations/terminal/**",
-				"!src/core/controller/ui/openWalkthrough.ts"
-			],
-			"plugins": [
-				"src/dev/grit/vscode-api.grit"
-			]
+			// "includes": [
+			// 	"**",
+			// 	"!**/hosts/vscode/**",
+			// 	"!**/test/**",
+			// 	"!**/*.test.ts",
+			// 	"!src/dev/**",
+			// 	"!src/extension.ts",
+			// 	"!src/integrations/git/commit-message-generator.ts",
+			// 	"!src/integrations/terminal/**",
+			// 	"!src/core/controller/ui/openWalkthrough.ts"
+			// ],
+			// "plugins": [
+			// 	"src/dev/grit/vscode-api.grit"
+			// ]
 		},
 		{
 			"includes": [

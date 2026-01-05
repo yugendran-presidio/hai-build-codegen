@@ -26,9 +26,13 @@ const MockApp = () => {
 				)
 			) : (
 				<ChatView
+					haiConfigFolder=""
 					hideAnnouncement={() => {}}
 					isHidden={false}
+					onTaskSelect={() => {}}
+					selectedHaiTask={null}
 					showAnnouncement={showAnnouncement}
+					showHaiTaskListView={() => {}}
 					showHistoryView={() => {}}
 				/>
 			)}

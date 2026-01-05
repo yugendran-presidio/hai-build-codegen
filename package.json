@@ -163,6 +163,12 @@
 				"when": "hai.isDevMode"
 			},
 			{
+				"command": "hai.haiBuildTaskListClicked",
+				"title": "HAI Tasks",
+				"icon": "$(checklist)",
+				"category": "HAI Build"
+			},
+			{
 				"command": "hai.addToChat",
 				"title": "Add to HAI",
 				"category": "HAI"
@@ -270,8 +276,13 @@
 					"when": "view == hai-build-code-generator.SidebarProvider"
 				},
 				{
+					"command": "hai.haiBuildTaskListClicked",
+					"group": "navigation@4",
+					"when": "view == hai-build-code-generator.SidebarProvider"
+				},
+				{
 					"command": "hai.settingsButtonClicked",
-					"group": "navigation@6",
+					"group": "navigation@5",
 					"when": "view == hai-build-code-generator.SidebarProvider"
 				}
 			],
