@@ -112,7 +112,6 @@ export interface McpMarketplaceItem {
 	createdAt: string
 	updatedAt: string
 	lastGithubSync: string
-	isLocal?: boolean
 }
 
 export interface McpMarketplaceCatalog {

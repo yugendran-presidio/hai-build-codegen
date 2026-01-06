@@ -32,7 +32,6 @@ import { AuthService } from "@/services/auth/AuthService"
 import { OcaAuthService } from "@/services/auth/oca/OcaAuthService"
 import { LogoutReason } from "@/services/auth/types"
 import { featureFlagsService } from "@/services/feature-flags"
-import { getStarCount } from "@/services/github/github"
 import { getDistinctId } from "@/services/logging/distinctId"
 import { telemetryService } from "@/services/telemetry"
 import { TelemetryProviderFactory } from "@/services/telemetry/TelemetryProviderFactory"
@@ -40,7 +39,6 @@ import { getAxiosSettings } from "@/shared/net"
 import { ShowMessageType } from "@/shared/proto/host/window"
 import type { AuthState } from "@/shared/proto/index.cline"
 import { getLatestAnnouncementId } from "@/utils/announcements"
-import { getAllLocalMcps, getLocalMcp } from "@/utils/local-mcp-registry"
 import { getCwd, getDesktopDir } from "@/utils/path"
 import { BannerService } from "../../services/banner/BannerService"
 import { PromptRegistry } from "../prompts/system-prompt"
@@ -674,7 +672,7 @@ export class Controller {
 		const response = await axios.get(`${ClineEnv.config().mcpBaseUrl}/marketplace`, {
 			headers: {
 				"Content-Type": "application/json",
-				"User-Agent": "HAI-Opensource-Client",
+				"User-Agent": "cline-vscode-extension",
 			},
 			...getAxiosSettings(),
 		})
@@ -699,32 +697,7 @@ export class Controller {
 			items = items.filter((item: McpMarketplaceItem) => allowedIds.has(item.mcpId))
 		}
 
-		// Create an array to hold all local MCPs with their star counts
-		const localMcpItems: McpMarketplaceItem[] = []
-
-		// Get all local MCPs from registry
-		const localMcpIds = Object.keys(getAllLocalMcps())
-
-		// Fetch GitHub stars for each local MCP
-		for (const mcpId of localMcpIds) {
-			const mcp = getLocalMcp(mcpId)
-			if (mcp) {
-				// Update star count for this MCP and add isLocal flag
-				const gitHubStars = await getStarCount(mcp.githubUrl)
-				localMcpItems.push({
-					...mcp,
-					githubStars: gitHubStars || 0,
-					isLocal: true, // Add isLocal flag to identify local MCPs,
-					createdAt: "",
-					updatedAt: "",
-					lastGithubSync: "",
-				})
-			}
-		}
-
-		const catalog: McpMarketplaceCatalog = {
-			items: [...localMcpItems, ...items],
-		}
+		const catalog: McpMarketplaceCatalog = { items }
 
 		// Store in cache file
 		await writeMcpMarketplaceCatalogToCache(catalog)
