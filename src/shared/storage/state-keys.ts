@@ -272,10 +272,14 @@ export interface Secrets {
 	nousResearchApiKey: string | undefined
 }
 
+import { IHaiStory } from "../hai-task"
+
 export interface LocalState {
 	localClineRulesToggles: ClineRulesToggles
 	localCursorRulesToggles: ClineRulesToggles
 	localWindsurfRulesToggles: ClineRulesToggles
 	localAgentsRulesToggles: ClineRulesToggles
 	workflowToggles: ClineRulesToggles
+	haiConfig: { folder: string; ts: string } | undefined
+	haiTaskList: IHaiStory[] | undefined
 }

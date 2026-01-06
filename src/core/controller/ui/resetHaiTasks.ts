@@ -11,8 +11,11 @@ import { sendHaiTaskDataUpdate } from "./subscribeToHaiTaskData"
  */
 export async function resetHaiTasks(controller: Controller, _request: EmptyRequest): Promise<Empty> {
 	try {
-		// Clear the HAI config using workspace state
-		controller.stateManager.setWorkspaceState("haiConfig" as any, undefined)
+		// Clear the HAI config and task list using workspace state
+		controller.stateManager.setWorkspaceStateBatch({
+			haiConfig: undefined,
+			haiTaskList: undefined,
+		})
 
 		// Send empty task data to all subscribed clients
 		sendHaiTaskDataUpdate({

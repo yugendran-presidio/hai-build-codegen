@@ -158,6 +158,8 @@ export async function readWorkspaceStateFromDisk(context: ExtensionContext): Pro
 	const localCursorRulesToggles = context.workspaceState.get("localCursorRulesToggles") as ClineRulesToggles | undefined
 	const localAgentsRulesToggles = context.workspaceState.get("localAgentsRulesToggles") as ClineRulesToggles | undefined
 	const localWorkflowToggles = context.workspaceState.get("workflowToggles") as ClineRulesToggles | undefined
+	const haiConfig = context.workspaceState.get("haiConfig") as { folder: string; ts: string } | undefined
+	const haiTaskList = context.workspaceState.get("haiTaskList")
 
 	return {
 		localClineRulesToggles: localClineRulesToggles || {},
@@ -165,6 +167,8 @@ export async function readWorkspaceStateFromDisk(context: ExtensionContext): Pro
 		localCursorRulesToggles: localCursorRulesToggles || {},
 		localAgentsRulesToggles: localAgentsRulesToggles || {},
 		workflowToggles: localWorkflowToggles || {},
+		haiConfig: haiConfig ?? { folder: "", ts: "" },
+		haiTaskList: Array.isArray(haiTaskList) ? haiTaskList : [],
 	}
 }
 

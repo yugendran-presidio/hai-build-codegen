@@ -325,9 +325,11 @@ export class StateManager {
 			throw new Error(STATE_MANAGER_NOT_INITIALIZED)
 		}
 
-		// Update cache immediately for all keys
-		Object.entries(updates).forEach(([key, value]) => {
-			this.workspaceStateCache[key as keyof LocalState] = value
+		// Update cache in one go
+		Object.assign(this.workspaceStateCache, updates)
+
+		// Then track the keys for persistence
+		Object.keys(updates).forEach((key) => {
 			this.pendingWorkspaceState.add(key as LocalStateKey)
 		})
 

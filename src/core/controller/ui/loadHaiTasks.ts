@@ -46,8 +46,11 @@ export async function loadHaiTasks(controller: Controller, request: HaiTasksLoad
 
 		if (selectedFolderPath) {
 			const ts = getFormattedDateTime()
-			await fetchTaskFromSelectedFolder(controller, selectedFolderPath, ts)
-			controller.stateManager.setWorkspaceState("haiConfig" as any, { folder: selectedFolderPath, ts })
+			const stories = await fetchTaskFromSelectedFolder(controller, selectedFolderPath, ts)
+			controller.stateManager.setWorkspaceStateBatch({
+				haiConfig: { folder: selectedFolderPath, ts },
+				haiTaskList: stories,
+			})
 		}
 
 		return Empty.create({})
@@ -60,7 +63,7 @@ export async function loadHaiTasks(controller: Controller, request: HaiTasksLoad
 /**
  * Fetch tasks from the selected folder and send to webview
  */
-async function fetchTaskFromSelectedFolder(_controller: Controller, folderPath: string, ts: string): Promise<void> {
+async function fetchTaskFromSelectedFolder(_controller: Controller, folderPath: string, ts: string): Promise<IHaiStory[]> {
 	const stories = await readHaiTaskList(folderPath)
 
 	if (stories.length === 0) {
@@ -73,6 +76,8 @@ async function fetchTaskFromSelectedFolder(_controller: Controller, folderPath: 
 		folderPath,
 		timestamp: ts,
 	})
+
+	return stories
 }
 
 /**

@@ -28,13 +28,17 @@ const AppContent = () => {
 		showAccount,
 		showAnnouncement,
 		onboardingModels,
-		navigateToHaiTaskList,
+		navigateToHaiTaskList: contextNavigateToHaiTaskList,
 		showHaiTaskList,
 		hideHaiTaskList,
 		setShowAnnouncement,
 		setShouldShowAnnouncement,
 		closeMcpView,
-		navigateToHistory,
+		navigateToHistory: contextNavigateToHistory,
+		navigateToSettings: contextNavigateToSettings,
+		navigateToAccount: contextNavigateToAccount,
+		navigateToMcp: contextNavigateToMcp,
+		navigateToChat: contextNavigateToChat,
 		hideSettings,
 		hideHistory,
 		hideAccount,
@@ -103,6 +107,152 @@ const AppContent = () => {
 		}
 	}, [])
 
+	// Subscribe to HAI Build Task List button clicks and clear detailed state
+	useEffect(() => {
+		const unsubscribe = UiServiceClient.subscribeToHaiBuildTaskListClicked({} as EmptyRequest, {
+			onResponse: () => {
+				console.log("[DEBUG] HAI Build Task List button clicked - clearing detailed state")
+				// Clear detailed state when button is clicked
+				setDetailedTask(null)
+				setDetailedStory(null)
+				// Then navigate to task list
+				contextNavigateToHaiTaskList()
+			},
+			onError: (error) => {
+				console.error("Error in HAI Build Task List button clicked subscription:", error)
+			},
+			onComplete: () => {
+				console.log("HAI Build Task List button clicked subscription completed")
+			},
+		})
+
+		return () => {
+			if (unsubscribe) {
+				unsubscribe()
+			}
+		}
+	}, [contextNavigateToHaiTaskList])
+
+	// Subscribe to MCP button clicks and clear detailed state
+	useEffect(() => {
+		const unsubscribe = UiServiceClient.subscribeToMcpButtonClicked({} as EmptyRequest, {
+			onResponse: () => {
+				console.log("[DEBUG] MCP button clicked - clearing detailed state")
+				setDetailedTask(null)
+				setDetailedStory(null)
+				contextNavigateToMcp()
+			},
+			onError: (error) => {
+				console.error("Error in MCP button clicked subscription:", error)
+			},
+			onComplete: () => {
+				console.log("MCP button clicked subscription completed")
+			},
+		})
+
+		return () => {
+			if (unsubscribe) {
+				unsubscribe()
+			}
+		}
+	}, [contextNavigateToMcp])
+
+	// Subscribe to History button clicks and clear detailed state
+	useEffect(() => {
+		const unsubscribe = UiServiceClient.subscribeToHistoryButtonClicked({} as EmptyRequest, {
+			onResponse: () => {
+				console.log("[DEBUG] History button clicked - clearing detailed state")
+				setDetailedTask(null)
+				setDetailedStory(null)
+				contextNavigateToHistory()
+			},
+			onError: (error) => {
+				console.error("Error in History button clicked subscription:", error)
+			},
+			onComplete: () => {
+				console.log("History button clicked subscription completed")
+			},
+		})
+
+		return () => {
+			if (unsubscribe) {
+				unsubscribe()
+			}
+		}
+	}, [contextNavigateToHistory])
+
+	// Subscribe to Account button clicks and clear detailed state
+	useEffect(() => {
+		const unsubscribe = UiServiceClient.subscribeToAccountButtonClicked({} as EmptyRequest, {
+			onResponse: () => {
+				console.log("[DEBUG] Account button clicked - clearing detailed state")
+				setDetailedTask(null)
+				setDetailedStory(null)
+				contextNavigateToAccount()
+			},
+			onError: (error) => {
+				console.error("Error in Account button clicked subscription:", error)
+			},
+			onComplete: () => {
+				console.log("Account button clicked subscription completed")
+			},
+		})
+
+		return () => {
+			if (unsubscribe) {
+				unsubscribe()
+			}
+		}
+	}, [contextNavigateToAccount])
+
+	// Subscribe to Settings button clicks and clear detailed state
+	useEffect(() => {
+		const unsubscribe = UiServiceClient.subscribeToSettingsButtonClicked({} as EmptyRequest, {
+			onResponse: () => {
+				console.log("[DEBUG] Settings button clicked - clearing detailed state")
+				setDetailedTask(null)
+				setDetailedStory(null)
+				contextNavigateToSettings()
+			},
+			onError: (error) => {
+				console.error("Error in Settings button clicked subscription:", error)
+			},
+			onComplete: () => {
+				console.log("Settings button clicked subscription completed")
+			},
+		})
+
+		return () => {
+			if (unsubscribe) {
+				unsubscribe()
+			}
+		}
+	}, [contextNavigateToSettings])
+
+	// Subscribe to Chat/New Task button clicks and clear detailed state
+	useEffect(() => {
+		const unsubscribe = UiServiceClient.subscribeToChatButtonClicked({} as EmptyRequest, {
+			onResponse: () => {
+				console.log("[DEBUG] Chat/New Task button clicked - clearing detailed state")
+				setDetailedTask(null)
+				setDetailedStory(null)
+				contextNavigateToChat()
+			},
+			onError: (error) => {
+				console.error("Error in Chat button clicked subscription:", error)
+			},
+			onComplete: () => {
+				console.log("Chat button clicked subscription completed")
+			},
+		})
+
+		return () => {
+			if (unsubscribe) {
+				unsubscribe()
+			}
+		}
+	}, [contextNavigateToChat])
+
 	// Handler for loading/configuring HAI tasks
 	const handleConfigure = useCallback(
 		async (loadDefault: boolean) => {
@@ -154,6 +304,49 @@ const AppContent = () => {
 			setDetailedTask(null)
 		}
 	}, [])
+
+	// Wrapped navigation functions that clear detailed state
+	const navigateToHistory = useCallback(() => {
+		setDetailedTask(null)
+		setDetailedStory(null)
+		contextNavigateToHistory()
+	}, [contextNavigateToHistory])
+
+	const navigateToSettings = useCallback(
+		(targetSection?: string) => {
+			setDetailedTask(null)
+			setDetailedStory(null)
+			contextNavigateToSettings(targetSection)
+		},
+		[contextNavigateToSettings],
+	)
+
+	const navigateToAccount = useCallback(() => {
+		setDetailedTask(null)
+		setDetailedStory(null)
+		contextNavigateToAccount()
+	}, [contextNavigateToAccount])
+
+	const navigateToMcp = useCallback(
+		(tab?: any) => {
+			setDetailedTask(null)
+			setDetailedStory(null)
+			contextNavigateToMcp(tab)
+		},
+		[contextNavigateToMcp],
+	)
+
+	const navigateToHaiTaskList = useCallback(() => {
+		setDetailedTask(null)
+		setDetailedStory(null)
+		contextNavigateToHaiTaskList()
+	}, [contextNavigateToHaiTaskList])
+
+	const navigateToChat = useCallback(() => {
+		setDetailedTask(null)
+		setDetailedStory(null)
+		contextNavigateToChat()
+	}, [contextNavigateToChat])
 
 	// Hide function for experts
 	const _hideExperts = useCallback(() => setShowExperts(false), [])

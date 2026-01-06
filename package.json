@@ -262,28 +262,23 @@
 			"view/title": [
 				{
 					"command": "hai.plusButtonClicked",
-					"group": "navigation@1",
-					"when": "view == hai-build-code-generator.SidebarProvider"
+					"group": "navigation@1"
 				},
 				{
 					"command": "hai.mcpButtonClicked",
-					"group": "navigation@2",
-					"when": "view == hai-build-code-generator.SidebarProvider"
+					"group": "navigation@2"
 				},
 				{
 					"command": "hai.historyButtonClicked",
-					"group": "navigation@3",
-					"when": "view == hai-build-code-generator.SidebarProvider"
+					"group": "navigation@3"
 				},
 				{
 					"command": "hai.haiBuildTaskListClicked",
-					"group": "navigation@4",
-					"when": "view == hai-build-code-generator.SidebarProvider"
+					"group": "navigation@4"
 				},
 				{
 					"command": "hai.settingsButtonClicked",
-					"group": "navigation@5",
-					"when": "view == hai-build-code-generator.SidebarProvider"
+					"group": "navigation@5"
 				}
 			],
 			"editor/context": [

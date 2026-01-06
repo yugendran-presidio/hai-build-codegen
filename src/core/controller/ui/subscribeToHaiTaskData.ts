@@ -1,11 +1,19 @@
 import type { IHaiStory, IHaiTask } from "@shared/hai-task"
 import { EmptyRequest } from "@shared/proto/cline/common"
 import { HaiStory, HaiTask, HaiTaskDataResponse } from "@shared/proto/cline/ui"
+import * as vscode from "vscode"
 import { getRequestRegistry, StreamingResponseHandler } from "../grpc-handler"
 import { Controller } from "../index"
 
-// Keep track of active HAI task data subscriptions
-const activeHaiTaskDataSubscriptions = new Set<StreamingResponseHandler<HaiTaskDataResponse>>()
+// Keep track of active HAI task data subscriptions per workspace
+const activeHaiTaskDataSubscriptions = new Map<string, Set<StreamingResponseHandler<HaiTaskDataResponse>>>()
+
+/**
+ * Get the current workspace ID
+ */
+function getWorkspaceId(): string {
+	return vscode.workspace.workspaceFolders?.[0]?.uri.toString() || "default"
+}
 
 /**
  * Subscribe to HAI task data updates
@@ -15,17 +23,46 @@ const activeHaiTaskDataSubscriptions = new Set<StreamingResponseHandler<HaiTaskD
  * @param requestId The ID of the request (passed by the gRPC handler)
  */
 export async function subscribeToHaiTaskData(
-	_controller: Controller,
+	controller: Controller,
 	_request: EmptyRequest,
 	responseStream: StreamingResponseHandler<HaiTaskDataResponse>,
 	requestId?: string,
 ): Promise<void> {
+	const workspaceId = getWorkspaceId()
+	let workspaceSubscriptions = activeHaiTaskDataSubscriptions.get(workspaceId)
+	if (!workspaceSubscriptions) {
+		workspaceSubscriptions = new Set()
+		activeHaiTaskDataSubscriptions.set(workspaceId, workspaceSubscriptions)
+	}
+
 	// Add this subscription to the active subscriptions
-	activeHaiTaskDataSubscriptions.add(responseStream)
+	workspaceSubscriptions.add(responseStream)
+
+	// Send initial data if available in stateManager
+	const haiConfig = controller.stateManager.getWorkspaceStateKey("haiConfig")
+	const haiTaskList = controller.stateManager.getWorkspaceStateKey("haiTaskList")
+
+	if (haiConfig && haiTaskList) {
+		const protoStories = haiTaskList.map((story) => convertToProtoStory(story))
+		const response = HaiTaskDataResponse.create({
+			stories: protoStories,
+			folderPath: haiConfig.folder,
+			timestamp: haiConfig.ts,
+		})
+
+		try {
+			await responseStream(response, false)
+		} catch (error) {
+			console.error("Error sending initial HAI task data:", error)
+		}
+	}
 
 	// Register cleanup when the connection is closed
 	const cleanup = () => {
-		activeHaiTaskDataSubscriptions.delete(responseStream)
+		workspaceSubscriptions?.delete(responseStream)
+		if (workspaceSubscriptions?.size === 0) {
+			activeHaiTaskDataSubscriptions.delete(workspaceId)
+		}
 	}
 
 	// Register the cleanup function with the request registry if we have a requestId
@@ -35,7 +72,7 @@ export async function subscribeToHaiTaskData(
 }
 
 /**
- * Send HAI task data update to all active subscribers
+ * Send HAI task data update to all active subscribers in the current workspace
  * @param data The task data containing stories, folder path, and timestamp
  */
 export async function sendHaiTaskDataUpdate(data: {
@@ -43,6 +80,13 @@ export async function sendHaiTaskDataUpdate(data: {
 	folderPath: string
 	timestamp: string
 }): Promise<void> {
+	const workspaceId = getWorkspaceId()
+	const workspaceSubscriptions = activeHaiTaskDataSubscriptions.get(workspaceId)
+
+	if (!workspaceSubscriptions || workspaceSubscriptions.size === 0) {
+		return
+	}
+
 	// Convert IHaiStory[] to HaiStory[] (proto format)
 	const protoStories = data.stories.map((story) => convertToProtoStory(story))
 
@@ -52,8 +96,8 @@ export async function sendHaiTaskDataUpdate(data: {
 		timestamp: data.timestamp,
 	})
 
-	// Send the event to all active subscribers
-	const promises = Array.from(activeHaiTaskDataSubscriptions).map(async (responseStream) => {
+	// Send the event to all active subscribers in THIS workspace
+	const promises = Array.from(workspaceSubscriptions).map(async (responseStream) => {
 		try {
 			await responseStream(
 				response,
@@ -62,7 +106,7 @@ export async function sendHaiTaskDataUpdate(data: {
 		} catch (error) {
 			console.error("Error sending HAI task data update:", error)
 			// Remove the subscription if there was an error
-			activeHaiTaskDataSubscriptions.delete(responseStream)
+			workspaceSubscriptions.delete(responseStream)
 		}
 	})
 

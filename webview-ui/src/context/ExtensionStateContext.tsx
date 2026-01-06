@@ -390,56 +390,61 @@ export const ExtensionStateContextProvider: React.FC<{
 			},
 		})
 
+		// Note: Navigation button subscriptions moved to App.tsx to allow clearing
+		// of detailed view state (detailedTask/detailedStory) before navigation.
+		// This includes: MCP, History, Account, and HAI Task List buttons.
+
 		// Subscribe to MCP button clicked events with webview type
-		mcpButtonUnsubscribeRef.current = UiServiceClient.subscribeToMcpButtonClicked(
-			{},
-			{
-				onResponse: () => {
-					console.log("[DEBUG] Received mcpButtonClicked event from gRPC stream")
-					navigateToMcp()
-				},
-				onError: (error) => {
-					console.error("Error in mcpButtonClicked subscription:", error)
-				},
-				onComplete: () => {
-					console.log("mcpButtonClicked subscription completed")
-				},
-			},
-		)
+		// mcpButtonUnsubscribeRef.current = UiServiceClient.subscribeToMcpButtonClicked(
+		// 	{},
+		// 	{
+		// 		onResponse: () => {
+		// 			console.log("[DEBUG] Received mcpButtonClicked event from gRPC stream")
+		// 			navigateToMcp()
+		// 		},
+		// 		onError: (error) => {
+		// 			console.error("Error in mcpButtonClicked subscription:", error)
+		// 		},
+		// 		onComplete: () => {
+		// 			console.log("mcpButtonClicked subscription completed")
+		// 		},
+		// 	},
+		// )
 
 		// Set up history button clicked subscription with webview type
-		historyButtonClickedSubscriptionRef.current = UiServiceClient.subscribeToHistoryButtonClicked(
-			{},
-			{
-				onResponse: () => {
-					// When history button is clicked, navigate to history view
-					console.log("[DEBUG] Received history button clicked event from gRPC stream")
-					navigateToHistory()
-				},
-				onError: (error) => {
-					console.error("Error in history button clicked subscription:", error)
-				},
-				onComplete: () => {
-					console.log("History button clicked subscription completed")
-				},
-			},
-		)
+		// historyButtonClickedSubscriptionRef.current = UiServiceClient.subscribeToHistoryButtonClicked(
+		// 	{},
+		// 	{
+		// 		onResponse: () => {
+		// 			// When history button is clicked, navigate to history view
+		// 			console.log("[DEBUG] Received history button clicked event from gRPC stream")
+		// 			navigateToHistory()
+		// 		},
+		// 		onError: (error) => {
+		// 			console.error("Error in history button clicked subscription:", error)
+		// 		},
+		// 		onComplete: () => {
+		// 			console.log("History button clicked subscription completed")
+		// 		},
+		// 	},
+		// )
 
 		// Subscribe to chat button clicked events with webview type
-		chatButtonUnsubscribeRef.current = UiServiceClient.subscribeToChatButtonClicked(
-			{},
-			{
-				onResponse: () => {
-					// When chat button is clicked, navigate to chat
-					console.log("[DEBUG] Received chat button clicked event from gRPC stream")
-					navigateToChat()
-				},
-				onError: (error) => {
-					console.error("Error in chat button subscription:", error)
-				},
-				onComplete: () => {},
-			},
-		)
+		// (Moved to App.tsx to clear detailed state)
+		// chatButtonUnsubscribeRef.current = UiServiceClient.subscribeToChatButtonClicked(
+		// 	{},
+		// 	{
+		// 		onResponse: () => {
+		// 			// When chat button is clicked, navigate to chat
+		// 			console.log("[DEBUG] Received chat button clicked event from gRPC stream")
+		// 			navigateToChat()
+		// 		},
+		// 		onError: (error) => {
+		// 			console.error("Error in chat button subscription:", error)
+		// 		},
+		// 		onComplete: () => {},
+		// 	},
+		// )
 
 		// Subscribe to didBecomeVisible events
 		didBecomeVisibleUnsubscribeRef.current = UiServiceClient.subscribeToDidBecomeVisible(EmptyRequest.create({}), {
@@ -470,18 +475,18 @@ export const ExtensionStateContextProvider: React.FC<{
 		})
 
 		// Set up settings button clicked subscription
-		settingsButtonClickedSubscriptionRef.current = UiServiceClient.subscribeToSettingsButtonClicked(EmptyRequest.create({}), {
-			onResponse: () => {
-				// When settings button is clicked, navigate to settings
-				navigateToSettings()
-			},
-			onError: (error) => {
-				console.error("Error in settings button clicked subscription:", error)
-			},
-			onComplete: () => {
-				console.log("Settings button clicked subscription completed")
-			},
-		})
+		// settingsButtonClickedSubscriptionRef.current = UiServiceClient.subscribeToSettingsButtonClicked(EmptyRequest.create({}), {
+		// 	onResponse: () => {
+		// 		// When settings button is clicked, navigate to settings
+		// 		navigateToSettings()
+		// 	},
+		// 	onError: (error) => {
+		// 		console.error("Error in settings button clicked subscription:", error)
+		// 	},
+		// 	onComplete: () => {
+		// 		console.log("Settings button clicked subscription completed")
+		// 	},
+		// })
 
 		// Subscribe to partial message events
 		partialMessageUnsubscribeRef.current = UiServiceClient.subscribeToPartialMessage(EmptyRequest.create({}), {
@@ -571,37 +576,42 @@ export const ExtensionStateContextProvider: React.FC<{
 			})
 
 		// Set up account button clicked subscription
-		accountButtonClickedSubscriptionRef.current = UiServiceClient.subscribeToAccountButtonClicked(EmptyRequest.create(), {
-			onResponse: () => {
-				// When account button is clicked, navigate to account view
-				console.log("[DEBUG] Received account button clicked event from gRPC stream")
-				navigateToAccount()
-			},
-			onError: (error) => {
-				console.error("Error in account button clicked subscription:", error)
-			},
-			onComplete: () => {
-				console.log("Account button clicked subscription completed")
-			},
-		})
+		// accountButtonClickedSubscriptionRef.current = UiServiceClient.subscribeToAccountButtonClicked(EmptyRequest.create(), {
+		// 	onResponse: () => {
+		// 		// When account button is clicked, navigate to account view
+		// 		console.log("[DEBUG] Received account button clicked event from gRPC stream")
+		// 		navigateToAccount()
+		// 	},
+		// 	onError: (error) => {
+		// 		console.error("Error in account button clicked subscription:", error)
+		// 	},
+		// 	onComplete: () => {
+		// 		console.log("Account button clicked subscription completed")
+		// 	},
+		// })
+
+		// Note: HAI Build Task List button clicked subscription is now handled in App.tsx
+		// to allow clearing of detailed view state (detailedTask/detailedStory)
+		// which are local to App.tsx and not available in this context.
+		// The subscription was moved to App.tsx to properly clear state before navigation.
 
 		// Set up HAI Build Task List button clicked subscription
-		haiBuildTaskListClickedSubscriptionRef.current = UiServiceClient.subscribeToHaiBuildTaskListClicked(
-			EmptyRequest.create(),
-			{
-				onResponse: () => {
-					// When HAI Build Task List button is clicked, navigate to task list view
-					console.log("[DEBUG] Received HAI Build Task List button clicked event from gRPC stream")
-					navigateToHaiTaskList()
-				},
-				onError: (error) => {
-					console.error("Error in HAI Build Task List button clicked subscription:", error)
-				},
-				onComplete: () => {
-					console.log("HAI Build Task List button clicked subscription completed")
-				},
-			},
-		)
+		// haiBuildTaskListClickedSubscriptionRef.current = UiServiceClient.subscribeToHaiBuildTaskListClicked(
+		// 	EmptyRequest.create(),
+		// 	{
+		// 		onResponse: () => {
+		// 			// When HAI Build Task List button is clicked, navigate to task list view
+		// 			console.log("[DEBUG] Received HAI Build Task List button clicked event from gRPC stream")
+		// 			navigateToHaiTaskList()
+		// 		},
+		// 		onError: (error) => {
+		// 			console.error("Error in HAI Build Task List button clicked subscription:", error)
+		// 		},
+		// 		onComplete: () => {
+		// 			console.log("HAI Build Task List button clicked subscription completed")
+		// 		},
+		// 	},
+		// )
 
 		// Fetch available terminal profiles on launch
 		StateServiceClient.getAvailableTerminalProfiles(EmptyRequest.create({}))

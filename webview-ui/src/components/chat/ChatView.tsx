@@ -137,14 +137,24 @@ const ChatView = ({
 
 	// TAG:HAI - Track when a task completes successfully
 	useEffect(() => {
-		if (selectedHaiTask && messages.length > 0) {
+		if (selectedHaiTask && task && messages.length > 0) {
 			const lastMessage = messages[messages.length - 1]
 			// Check if the last message is a completion_result (task completed)
 			if ((lastMessage.ask === "completion_result" || lastMessage.say === "completion_result") && !lastMessage.partial) {
-				setLastSuccessfullyExecutedTaskId(selectedHaiTask.id)
+				// Verify that the current task is actually the HAI task by checking if task text contains HAI task content
+				const taskText = task.text || ""
+				const isHaiTask =
+					taskText.includes(selectedHaiTask.list) ||
+					taskText.includes(selectedHaiTask.acceptance) ||
+					taskText.includes(selectedHaiTask.id)
+
+				// Only track completion if this is actually the HAI task that was selected
+				if (isHaiTask) {
+					setLastSuccessfullyExecutedTaskId(selectedHaiTask.id)
+				}
 			}
 		}
-	}, [messages, selectedHaiTask])
+	}, [messages, selectedHaiTask, task])
 
 	useEffect(() => {
 		const handleCopy = async (e: ClipboardEvent) => {
