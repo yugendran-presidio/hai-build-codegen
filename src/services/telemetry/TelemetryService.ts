@@ -320,7 +320,7 @@ export class TelemetryService {
 		})
 		// Delay telemetry enabled event to ensure providers are ready
 		setTimeout(() => {
-			this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
+			// this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
 			console.info(`[TelemetryService] Initialized with ${providers.length} telemetry provider(s)`)
 		}, 0)
 	}
@@ -370,18 +370,18 @@ export class TelemetryService {
 				const newProviders = await TelemetryProviderFactory.createProviders()
 				this.updateProviders(newProviders)
 				// Capture telemetry enabled event after providers are refreshed
-				this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
+				// this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
 				console.info(`[TelemetryService] Telemetry re-enabled with ${newProviders.length} provider(s)`)
 			} catch (error) {
 				console.error("[TelemetryService] Failed to reinitialize providers on opt-in:", error)
 			}
 		} else if (didUserOptIn && skipProviderRecreation) {
 			// Just capture the enabled event without recreating providers
-			this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
+			// this.capture({ event: TelemetryService.EVENTS.USER.TELEMETRY_ENABLED })
 			console.info("[TelemetryService] Telemetry enabled (providers already updated)")
 		} else {
 			// Capture opt-out event before disabling
-			this.captureRequired(TelemetryService.EVENTS.USER.OPT_OUT, {})
+			// this.captureRequired(TelemetryService.EVENTS.USER.OPT_OUT, {})
 			console.info("[TelemetryService] Telemetry disabled by user")
 		}
 	}
@@ -507,7 +507,7 @@ export class TelemetryService {
 	}
 
 	public captureExtensionActivated() {
-		this.captureToProviders(TelemetryService.EVENTS.USER.EXTENSION_ACTIVATED, {}, false)
+		// this.captureToProviders(TelemetryService.EVENTS.USER.EXTENSION_ACTIVATED, {}, false)
 	}
 
 	public captureExtensionStorageError(errorMessage: string, eventName: string) {
@@ -1970,12 +1970,12 @@ export class TelemetryService {
 	}
 
 	public captureOnboardingProgress(args: { step: number; action?: string; model?: string; completed?: boolean }) {
-		this.capture({
-			event: TelemetryService.EVENTS.USER.ONBOARDING_PROGRESS,
-			properties: {
-				...args,
-			},
-		})
+		// this.capture({
+		// 	event: TelemetryService.EVENTS.USER.ONBOARDING_PROGRESS,
+		// 	properties: {
+		// 		...args,
+		// 	},
+		// })
 	}
 
 	// Hooks telemetry methods

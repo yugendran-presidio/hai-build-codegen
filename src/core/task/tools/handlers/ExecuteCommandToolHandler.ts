@@ -142,15 +142,15 @@ export class ExecuteCommandToolHandler implements IFullyManagedTool {
 
 		// Capture workspace path resolution telemetry
 		if (config.isMultiRootEnabled && config.workspaceManager) {
-			telemetryService.captureWorkspacePathResolved(
-				config.ulid,
-				"ExecuteCommandToolHandler",
-				workspaceHintUsed ? "hint_provided" : "fallback_to_primary",
-				workspaceHintUsed ? "workspace_name" : undefined,
-				resolvedToNonPrimary, // resolution success = resolved to different workspace
-				undefined, // TODO: could calculate workspace index if needed
-				true,
-			)
+			// telemetryService.captureWorkspacePathResolved(
+			// 	config.ulid,
+			// 	"ExecuteCommandToolHandler",
+			// 	workspaceHintUsed ? "hint_provided" : "fallback_to_primary",
+			// 	workspaceHintUsed ? "workspace_name" : undefined,
+			// 	resolvedToNonPrimary, // resolution success = resolved to different workspace
+			// 	undefined, // TODO: could calculate workspace index if needed
+			// 	true,
+			// )
 		}
 
 		if ((!requiresApprovalPerLLM && autoApproveSafe) || (requiresApprovalPerLLM && autoApproveSafe && autoApproveAll)) {
