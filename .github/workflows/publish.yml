@@ -65,7 +65,7 @@ jobs:
               run: cd webview-ui && npm install --include=optional
 
             - name: Install Publishing Tools
-              run: npm install -g @vscode/vsce ovsx
+              run: npm install -g @vscode/vsce
 
             - name: Get Version
               id: get_version
@@ -92,7 +92,6 @@ jobs:
                   POST_HOG_HOST: ${{ secrets.POST_HOG_API_URL }}
 
                   # VSCE_PAT: ${{ secrets.VSCE_PAT }}
-                  # OVSX_PAT: ${{ secrets.OVSX_PAT }}
                   # CLINE_ENVIRONMENT: production
                   # TELEMETRY_SERVICE_API_KEY: ${{ secrets.TELEMETRY_SERVICE_API_KEY }}
                   # ERROR_SERVICE_API_KEY: ${{ secrets.ERROR_SERVICE_API_KEY }}
